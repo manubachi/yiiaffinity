@@ -40,12 +40,12 @@ class GenerosController extends \yii\web\Controller
     {
         $fila = $this->comprobarGenero($id);
 
-        if ($fila != null) {
+        if (!empty($fila)) {
             Yii::$app->session->setFlash('error', 'No se puede borrar porque hay películas de este género');
-            return $this->redirect(['generos/index']);
+        } else {
+            Yii::$app->db->createCommand()->delete('generos', ['id' => $id])->execute();
+            Yii::$app->session->setFlash('warning', 'Género borrado correctamente');
         }
-        Yii::$app->db->createCommand()->delete('generos', ['id' => $id])->execute();
-        Yii::$app->session->setFlash('warning', 'Género borrado correctamente');
         return $this->redirect(['generos/index']);
     }
 
@@ -66,24 +66,38 @@ class GenerosController extends \yii\web\Controller
         ]);
     }
 
+    /**
+     * Función que busca el género correspondiente al id en la tabla de géneros.
+     * @param  [type] $id Id correspondiente al genero que se desea buscar.
+     * @return [type]     Datos del genero que se ha buscado.
+     */
     private function buscarGenero($id)
     {
-        $fila = Yii::$app->db
-            ->createCommand('SELECT *
-                               FROM generos
-                              WHERE id = :id', [':id' => $id])->queryOne();
-        if ($fila === false) {
+        $fila = Yii::$app->db->createCommand('SELECT *
+                                                FROM generos
+                                               WHERE id = :id', [':id' => $id])
+                             ->queryOne();
+
+        if (empty($fila)) {
             throw new NotFoundHttpException('Ese género no existe.');
         }
         return $fila;
     }
 
+    /**
+     * Función que comprueba si el género tiene películas en la tabla peliculas.
+     * @param  [type] $id Id del género que se quiere comprobar.
+     * @return [type]     Estado de la consulta.
+     */
     private function comprobarGenero($id)
     {
-        $fila = \Yii::$app->db->createCommand('SELECT *
-                                                 FROM peliculas
-                                                WHERE genero_id = :genero_id', [':genero_id' => $id])
-                                                ->queryOne();
+        $fila = \Yii::$app->db
+                        ->createCommand('SELECT *
+                                           FROM peliculas
+                                          WHERE genero_id = :genero_id
+                                          LIMIT 1', [':genero_id' => $id])
+                        ->queryOne();
+
         return $fila;
     }
 }
