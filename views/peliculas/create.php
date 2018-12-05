@@ -11,6 +11,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <?= $form->field($peliculasForm, 'titulo') ?>
     <?= $form->field($peliculasForm, 'anyo') ?>
     <?= $form->field($peliculasForm, 'duracion') ?>
+    <?= $form->field($peliculasForm, 'sinopsis') ?>
     <?= $form->field($peliculasForm, 'genero_id') ?>
     <div class="form-group">
         <?= Html::submitButton('Insertar película', ['class' => 'btn btn-primary']) ?>

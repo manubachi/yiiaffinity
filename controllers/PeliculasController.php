@@ -14,10 +14,11 @@ class PeliculasController extends \yii\web\Controller
     public function actionIndex()
     {
         $filas = \Yii::$app->db
-            ->createCommand('SELECT p.*, g.genero 
+            ->createCommand('SELECT p.*, g.genero
                                FROM peliculas p
                                JOIN generos g
-                                 ON p.genero_id = g.id')->queryAll();
+                                 ON p.genero_id = g.id
+                           ORDER BY titulo')->queryAll();
         return $this->render('index', [
             'filas' => $filas,
         ]);
