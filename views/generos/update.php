@@ -6,6 +6,7 @@ $this->title = 'Modificar un género';
 $this->params['breadcrumbs'][] = ['label' => 'Géneros', 'url' => ['generos/index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
+<h1><?= $this->title ?></h1>
 <div class="row">
     <?php $form = ActiveForm::begin() ?>
         <?= $form->field($generosForm, 'genero') ?>

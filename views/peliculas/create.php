@@ -6,7 +6,7 @@ $this->title = 'Insertar una nueva película';
 $this->params['breadcrumbs'][] = ['label' => 'Películas', 'url' => ['peliculas/index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-
+<h1><?= $this->title ?></h1>
 <?php $form = ActiveForm::begin() ?>
     <?= $form->field($peliculasForm, 'titulo') ?>
     <?= $form->field($peliculasForm, 'anyo') ?>
