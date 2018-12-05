@@ -7,6 +7,10 @@ use yii\base\Model;
 
 class GenerosForm extends Model
 {
+    /**
+     * Nombre del género.
+     * @var string
+     */
     public $genero;
 
     public function rules()

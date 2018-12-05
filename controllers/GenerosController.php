@@ -8,6 +8,7 @@ use yii\data\Pagination;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\web\NotFoundHttpException;
+use yii\web\Response;
 
 /**
  * Definición del controlador peliculas.
@@ -36,6 +37,10 @@ class GenerosController extends \yii\web\Controller
         ];
     }
 
+    /**
+     * Genera el listado de géneros.
+     * @return string Vista del listado de los géneros
+     */
     public function actionIndex()
     {
         $count = Yii::$app->db
@@ -60,6 +65,10 @@ class GenerosController extends \yii\web\Controller
         ]);
     }
 
+    /**
+     * Crea un nuevo género.
+     * @return string Devuelve la vista index, si se ha creado el género, o la vista create si no.
+     */
     public function actionCreate()
     {
         $generosForm = new GenerosForm();
@@ -76,6 +85,11 @@ class GenerosController extends \yii\web\Controller
         ]);
     }
 
+    /**
+     * Borra un género.
+     * @param  int $id   ID del género a borrar.
+     * @return Response  Redirección a index.
+     */
     public function actionDelete($id)
     {
         $fila = $this->comprobarGenero($id);
@@ -89,6 +103,11 @@ class GenerosController extends \yii\web\Controller
         return $this->redirect(['generos/index']);
     }
 
+    /**
+     * Modifica un género.
+     * @param  int $id   ID del género a modificar.
+     * @return Response  Redirección a index.
+     */
     public function actionUpdate($id)
     {
         $generosForm = new GenerosForm(['attributes' => $this->buscarGenero($id)]);
