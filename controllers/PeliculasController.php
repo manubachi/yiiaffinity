@@ -4,6 +4,8 @@ namespace app\controllers;
 
 use app\models\PeliculasForm;
 use Yii;
+use yii\filters\AccessControl;
+use yii\filters\VerbFilter;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
 
@@ -12,6 +14,27 @@ use yii\web\Response;
  */
 class PeliculasController extends \yii\web\Controller
 {
+    public function behaviors()
+    {
+        return [
+            'verbs' => [
+                'class' => VerbFilter::class,
+                'actions' => [
+                    'delete' => ['post'],
+                ],
+            ],
+            'access' => [
+                'class' => AccessControl::class,
+                'only' => ['update'],
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
+                ],
+            ],
+        ];
+    }
     /**
      * Genera el listado de películas.
      * @return string Vista del listado de las películas
