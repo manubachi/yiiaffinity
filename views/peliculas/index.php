@@ -10,11 +10,11 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="row">
     <table class="table table-striped">
         <thead>
-            <th>Título</th>
-            <th>Año</th>
-            <th>Duracion</th>
+            <th><?= $sort->link('titulo') ?></th>
+            <th><?= $sort->link('anyo') ?></th>
+            <th><?= $sort->link('duracion') ?></th>
             <th>Sinopsis</th>
-            <th>Género</th>
+            <th><?= $sort->link('genero') ?></th>
             <th>Acciones</th>
         </thead>
         <tbody>

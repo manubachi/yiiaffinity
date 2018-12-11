@@ -5,6 +5,7 @@ namespace app\controllers;
 use app\models\PeliculasForm;
 use Yii;
 use yii\data\Pagination;
+use yii\data\Sort;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\web\NotFoundHttpException;
@@ -42,6 +43,23 @@ class PeliculasController extends \yii\web\Controller
      */
     public function actionIndex()
     {
+        $sort = new Sort([
+            'attributes' => [
+                'titulo',
+                'anyo',
+                'duracion',
+                'genero',
+            ],
+        ]);
+        if (empty($sort->orders)) {
+            $orderBy = '1';
+        } else {
+            $res = [];
+            foreach ($sort->orders as $columna => $sentido) {
+                $res[] = $sentido == SORT_ASC ? "$columna ASC" : "$columna DESC";
+            }
+            $orderBy = implode(',', $res);
+        }
         $count = Yii::$app->db
             ->createCommand('SELECT count(*) FROM peliculas')
             ->queryScalar();
@@ -51,18 +69,19 @@ class PeliculasController extends \yii\web\Controller
         ]);
 
         $filas = \Yii::$app->db
-            ->createCommand('SELECT p.*, g.genero
+            ->createCommand("SELECT p.*, g.genero
                                FROM peliculas p
                                JOIN generos g
                                  ON p.genero_id = g.id
-                           ORDER BY titulo
+                           ORDER BY $orderBy
                               LIMIT :limit
-                             OFFSET :offset', [
+                             OFFSET :offset", [
                             ':limit' => $pagination->limit,
                            ':offset' => $pagination->offset, ])->queryAll();
         return $this->render('index', [
             'filas' => $filas,
             'pagination' => $pagination,
+            'sort' => $sort,
         ]);
     }
 
