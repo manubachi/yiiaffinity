@@ -17,16 +17,16 @@ class GenerosForm extends Model
     {
         return [
             [['genero'], 'required'],
-            [['genero'], 'string', 'max' => 255],
             [['genero'], 'trim'],
+            [['genero'], 'string', 'max' => 255],
             [['genero'], function ($attribute, $params, $validator) {
-                $fila = Yii::$app->db
-                    ->createCommand('SELECT id
-                                       FROM generos
-                                      WHERE genero = :genero', [':genero' => $this->$attribute])
-                    ->queryOne();
+                $fila = (new \yii\db\Query())
+                    ->select('id')
+                    ->from('generos')
+                    ->where(['genero' => $this->$attribute])
+                    ->one();
                 if (!empty($fila) && $fila['id'] != Yii::$app->request->get('id')) {
-                    $this->addError($attribute, 'Ese género ya existe');
+                    $this->addError($attribute, 'Ese género ya existe.');
                 }
             }],
         ];

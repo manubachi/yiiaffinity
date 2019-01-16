@@ -2,12 +2,10 @@
 
 namespace app\controllers;
 
+use app\models\BuscarForm;
 use app\models\PeliculasForm;
 use Yii;
-use yii\data\Pagination;
 use yii\data\Sort;
-use yii\filters\AccessControl;
-use yii\filters\VerbFilter;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
 
@@ -16,27 +14,12 @@ use yii\web\Response;
  */
 class PeliculasController extends \yii\web\Controller
 {
-    public function behaviors()
+    public function actionPrueba()
     {
-        return [
-            'verbs' => [
-                'class' => VerbFilter::class,
-                'actions' => [
-                    'delete' => ['post'],
-                ],
-            ],
-            'access' => [
-                'class' => AccessControl::class,
-                'only' => ['update'],
-                'rules' => [
-                    [
-                        'allow' => true,
-                        'roles' => ['@'],
-                    ],
-                ],
-            ],
-        ];
+        Yii::$app->session->setFlash('error', 'Esto es un error.');
+        return $this->redirect(['peliculas/index']);
     }
+
     /**
      * Genera el listado de películas.
      * @return string Vista del listado de las películas
@@ -51,37 +34,30 @@ class PeliculasController extends \yii\web\Controller
                 'genero',
             ],
         ]);
-        if (empty($sort->orders)) {
-            $orderBy = '1';
-        } else {
-            $res = [];
-            foreach ($sort->orders as $columna => $sentido) {
-                $res[] = $sentido == SORT_ASC ? "$columna ASC" : "$columna DESC";
-            }
-            $orderBy = implode(',', $res);
-        }
-        $count = Yii::$app->db
-            ->createCommand('SELECT count(*) FROM peliculas')
-            ->queryScalar();
-        $pagination = new Pagination([
-            'defaultPageSize' => 5,
-            'totalCount' => $count,
-        ]);
 
-        $filas = \Yii::$app->db
-            ->createCommand("SELECT p.*, g.genero
-                               FROM peliculas p
-                               JOIN generos g
-                                 ON p.genero_id = g.id
-                           ORDER BY $orderBy
-                              LIMIT :limit
-                             OFFSET :offset", [
-                            ':limit' => $pagination->limit,
-                           ':offset' => $pagination->offset, ])->queryAll();
+        $buscarForm = new BuscarForm();
+
+        $query = (new \yii\db\Query())
+            ->select(['p.*', 'g.genero'])
+            ->from('peliculas p')
+            ->innerJoin('generos g', 'p.genero_id = g.id');
+
+        if ($buscarForm->load(Yii::$app->request->post()) && $buscarForm->validate()) {
+            $query->andFilterWhere(['ilike', 'titulo', $buscarForm->titulo]);
+            $query->andFilterWhere(['p.genero_id' => $buscarForm->genero_id]);
+        }
+
+        if (empty($sort->orders)) {
+            $query->orderBy(['p.id' => SORT_ASC]);
+        } else {
+            $query->orderBy($sort->orders);
+        }
+
         return $this->render('index', [
-            'filas' => $filas,
-            'pagination' => $pagination,
+            'filas' => $query->all(),
             'sort' => $sort,
+            'listaGeneros' => ['' => ''] + $this->listaGeneros(),
+            'buscarForm' => $buscarForm,
         ]);
     }
 
@@ -102,6 +78,20 @@ class PeliculasController extends \yii\web\Controller
         return $this->render('create', [
             'peliculasForm' => $peliculasForm,
             'listaGeneros' => $this->listaGeneros(),
+        ]);
+    }
+
+    public function actionVer($id)
+    {
+        $peliculasForm = new PeliculasForm(['attributes' => $this->buscarPelicula($id)]);
+        $peliculasForm->genero_id = (new \yii\db\Query())
+            ->select('genero')
+            ->from('generos')
+            ->where(['id' => $peliculasForm->genero_id])
+            ->scalar();
+
+        return $this->render('ver', [
+            'peliculasForm' => $peliculasForm,
         ]);
     }
 
@@ -144,12 +134,11 @@ class PeliculasController extends \yii\web\Controller
      */
     private function listaGeneros()
     {
-        $generos = Yii::$app->db->createCommand('SELECT * FROM generos')->queryAll();
-        $listaGeneros = [];
-        foreach ($generos as $genero) {
-            $listaGeneros[$genero['id']] = $genero['genero'];
-        }
-        return $listaGeneros;
+        return (new \yii\db\Query())
+            ->select('genero')
+            ->from('generos')
+            ->indexBy('id')
+            ->column();
     }
 
     /**
@@ -159,10 +148,10 @@ class PeliculasController extends \yii\web\Controller
      */
     private function buscarPelicula($id)
     {
-        $fila = Yii::$app->db
-            ->createCommand('SELECT *
-                               FROM peliculas
-                              WHERE id = :id', [':id' => $id])->queryOne();
+        $fila = (new \yii\db\Query())
+            ->from('peliculas')
+            ->where(['id' => $id])
+            ->one();
         if ($fila === false) {
             throw new NotFoundHttpException('Esa película no existe.');
         }

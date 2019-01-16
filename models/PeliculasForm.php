@@ -43,17 +43,16 @@ class PeliculasForm extends Model
             [['genero_id'], 'number'],
             [['titulo'], 'string', 'max' => 255],
             [['sinopsis'], 'trim'],
-            [['duracion', 'anyo'], 'integer', 'min' => 0],
         ];
     }
 
     public function attributeLabels()
     {
         return [
-                'titulo' => 'Título',
-                'anyo' => 'Año',
-                'duracion' => 'Duración',
-                'genero_id' => 'Género',
+            'titulo' => 'Título',
+            'anyo' => 'Año',
+            'duracion' => 'Duración',
+            'genero_id' => 'Género',
         ];
     }
 }
