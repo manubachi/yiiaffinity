@@ -82,7 +82,7 @@ class PeliculasController extends \yii\web\Controller
         $pelicula->genero_id = $pelicula->genero->genero;
 
         return $this->render('ver', [
-            'peliculasForm' => $pelicula,
+            'pelicula' => $pelicula,
         ]);
     }
 
