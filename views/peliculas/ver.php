@@ -12,10 +12,10 @@ $inputOptions = [
 ];
 ?>
 <?php foreach($pelicula->participaciones as $participacion): ?>
-    <dl>
-        <dt>Nombre</dt>
+    <dl class="dl-horizontal">
+        <dt>Nombre :</dt>
         <dd><?= $participacion->persona->nombre ?></dd>
-        <dt>Papel</dt>
+        <dt>Papel :</dt>
         <dd><?= $participacion->papel->papel ?></dd>
     </dl>
 <?php endforeach ?>
