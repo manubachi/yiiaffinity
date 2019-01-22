@@ -72,6 +72,7 @@ class PeliculasController extends \yii\web\Controller
         }
         return $this->render('create', [
             'pelicula' => $pelicula,
+            'listaGeneros' => ['' => ''] + $this->listaGeneros(),
         ]);
     }
 
