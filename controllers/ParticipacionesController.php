@@ -2,8 +2,11 @@
 
 namespace app\controllers;
 
+use app\models\Papeles;
 use app\models\Participaciones;
 use app\models\Peliculas;
+use app\models\Personas;
+use Yii;
 use yii\web\Controller;
 
 /**
@@ -35,5 +38,41 @@ class ParticipacionesController extends Controller
             'participaciones/update',
             'pelicula_id' => $pelicula_id,
         ]);
+    }
+
+    public function actionCreate($pelicula_id)
+    {
+        $participaciones = new Participaciones();
+        $pelicula = Peliculas::findOne($pelicula_id);
+
+        if ($participaciones->load(Yii::$app->request->post()) && $participaciones->save()) {
+            return $this->redirect([
+                'peliculas/ver',
+                'id' => $pelicula_id,
+            ]);
+        }
+
+        return $this->render('create', [
+            'participaciones' => $participaciones,
+            'pelicula' => $pelicula,
+            'listaPersonas' => ['' => ''] + $this->listaPersonas(),
+            'listaPapeles' => ['' => ''] + $this->listaPapeles(),
+        ]);
+    }
+
+    private function listaPersonas()
+    {
+        return Personas::find()
+            ->select('nombre')
+            ->indexBy('id')
+            ->column();
+    }
+
+    private function listaPapeles()
+    {
+        return Papeles::find()
+            ->select('papel')
+            ->indexBy('id')
+            ->column();
     }
 }
