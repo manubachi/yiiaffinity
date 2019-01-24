@@ -1,21 +1,32 @@
 <?php
-
+use app\models\Peliculas;
 use yii\helpers\Html;
-
-/* @var $this yii\web\View */
-/* @var $model app\models\Participaciones */
-
-$this->title = 'Update Participaciones: {nameAttribute}';
-$this->params['breadcrumbs'][] = ['label' => 'Participaciones', 'url' => ['index']];
-$this->params['breadcrumbs'][] = ['label' => $model->pelicula_id, 'url' => ['view', 'pelicula_id' => $model->pelicula_id, 'persona_id' => $model->persona_id, 'papel_id' => $model->papel_id]];
-$this->params['breadcrumbs'][] = 'Update';
+$this->title = 'Gestión de participaciones en una película';
+$this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="participaciones-update">
-
-    <h1><?= Html::encode($this->title) ?></h1>
-
-    <?= $this->render('_form', [
-        'model' => $model,
-    ]) ?>
-
-</div>
+<h1>Participantes en la película <?= Html::encode($pelicula->titulo) ?></h1>
+<table class="table table-striped">
+    <thead>
+        <th>Persona</th>
+        <th>Papel</th>
+        <th>Quitar</th>
+    </thead>
+    <tbody>
+        <?php foreach ($participaciones as $participacion): ?>
+            <tr>
+                <td><?= Html::encode($participacion->persona->nombre) ?></td>
+                <td><?= Html::encode($participacion->papel->papel) ?></td>
+                <td><?= Html::a(
+                    'Quitar',
+                    [
+                        'participaciones/delete',
+                        'pelicula_id' => $participacion->pelicula_id,
+                        'persona_id' => $participacion->persona_id,
+                        'papel_id' => $participacion->papel_id,
+                    ],
+                    ['class' => 'btn-xs btn-danger']
+                ) ?></td>
+            </tr>
+        <?php endforeach ?>
+    </tbody>
+</table>

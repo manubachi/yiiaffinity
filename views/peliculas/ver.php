@@ -38,7 +38,18 @@ $this->params['breadcrumbs'][] = $this->title;
         <?php endforeach ?>
     </dl>
 <?php endforeach ?>
+
 <?php $form = ActiveForm::begin(['enableClientValidation' => false]) ?>
+    <div class="form-group">
+        <?= Html::a(
+            'Modificar participaciones',
+            [
+                'participaciones/update',
+                'pelicula_id' => $pelicula->id,
+            ],
+            ['class' => 'btn btn-info']
+            ) ?>
+    </div>
     <div class="form-group">
         <?= Html::a('Volver', ['peliculas/index'], ['class' => 'btn btn-danger']) ?>
     </div>
