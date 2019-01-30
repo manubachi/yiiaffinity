@@ -10,6 +10,8 @@ namespace app\models;
  * @property string $anyo
  * @property string $sinopsis
  * @property int $duracion
+ * @property string $precio
+ * @property string $created_at
  * @property int $genero_id
  *
  * @property Participaciones[] $participaciones
@@ -32,10 +34,11 @@ class Peliculas extends \yii\db\ActiveRecord
     {
         return [
             [['titulo', 'genero_id'], 'required'],
-            [['anyo'], 'number'],
+            [['anyo', 'precio'], 'number'],
             [['sinopsis'], 'string'],
             [['duracion', 'genero_id'], 'default', 'value' => null],
             [['duracion', 'genero_id'], 'integer'],
+            [['created_at'], 'safe'],
             [['titulo'], 'string', 'max' => 255],
             [['genero_id'], 'exist', 'skipOnError' => true, 'targetClass' => Generos::className(), 'targetAttribute' => ['genero_id' => 'id']],
         ];
@@ -52,7 +55,9 @@ class Peliculas extends \yii\db\ActiveRecord
             'anyo' => 'Anyo',
             'sinopsis' => 'Sinopsis',
             'duracion' => 'Duracion',
-            'genero_id' => 'Genero',
+            'precio' => 'Precio',
+            'created_at' => 'Fecha alta',
+            'genero_id' => 'Genero ID',
         ];
     }
 
@@ -72,9 +77,6 @@ class Peliculas extends \yii\db\ActiveRecord
         return $this->hasOne(Generos::className(), ['id' => 'genero_id'])->inverseOf('peliculas');
     }
 
-    /**
-     * @return \yii\db\ActiveQuery
-     */
     public function getPersonas()
     {
         return $this->hasMany(Personas::class, ['id' => 'persona_id'])->via('participaciones');

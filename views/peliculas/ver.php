@@ -2,33 +2,27 @@
 use app\models\Papeles;
 
 use yii\helpers\Html;
+use yii\widgets\DetailView;
 use yii\widgets\ActiveForm;
 
 $this->title = 'Ver una película';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<dl class="dl-horizontal">
-    <dt>Título</dt>
-    <dd><?= Html::encode($pelicula->titulo) ?></dd>
-</dl>
-<dl class="dl-horizontal">
-    <dt>Año</dt>
-    <dd><?= Html::encode($pelicula->anyo) ?></dd>
-</dl>
-<dl class="dl-horizontal">
-    <dt>Duración</dt>
-    <dd><?= Html::encode($pelicula->duracion) ?></dd>
-</dl>
-<dl class="dl-horizontal">
-    <dt>Género</dt>
-    <dd><?= Html::encode($pelicula->genero->genero) ?></dd>
-</dl>
-
-<dl class="dl-horizontal">
-    <dt>Sinópsis</dt>
-    <dd><?= Html::encode($pelicula->sinopsis) ?></dd>
-</dl>
-
+<?= DetailView::widget([
+    'model' => $pelicula,
+    'attributes' => [
+        'titulo',
+        'anyo',
+        [
+            'label' => 'Duración',
+            'value' => $pelicula->duracion * 60,
+            'format' => 'duration',
+        ],
+        'sinopsis', 
+        'created_at:datetime',
+        'precio:currency',
+    ],
+]) ?>
 
 <?php foreach ($participantes as $papel => $personas): ?>
     <dl class="dl-horizontal">
@@ -41,5 +35,13 @@ $this->params['breadcrumbs'][] = $this->title;
 <?php $form = ActiveForm::begin(['enableClientValidation' => false]) ?>
     <div class="form-group">
         <?= Html::a('Volver', ['peliculas/index'], ['class' => 'btn btn-danger']) ?>
+        <?= Html::a(
+                'Crear participaciones',
+                [
+                    'participaciones/create',
+                    'pelicula_id' => $pelicula->id,
+                ],
+                ['class' => 'btn btn-success']
+                ) ?>
     </div>
 <?php ActiveForm::end() ?>

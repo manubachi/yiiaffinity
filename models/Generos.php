@@ -13,6 +13,7 @@ namespace app\models;
 class Generos extends \yii\db\ActiveRecord
 {
     private $_cuantas;
+
     /**
      * {@inheritdoc}
      */
@@ -75,7 +76,7 @@ class Generos extends \yii\db\ActiveRecord
     {
         return static::find()
             ->select('generos.*, COUNT(p.id) AS cuantas')
-            ->leftJoin('peliculas p', 'generos.id = p.genero_id')
+            ->joinWith('peliculas p', false)
             ->groupBy('generos.id');
     }
 }
