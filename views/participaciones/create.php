@@ -1,6 +1,7 @@
 <?php
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
+
 $this->title = 'Insertar nueva participacion en ' . $pelicula->titulo;
 ?>
 <h1><?= $this->title ?></h1>
