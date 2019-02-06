@@ -5,15 +5,13 @@ use yii\grid\ActionColumn;
 use yii\grid\SerialColumn;
 use kartik\number\NumberControl;
 use yii\helpers\Html;
-
 use yii\web\View;
 
 $this->title = 'Listado de películas';
 $this->params['breadcrumbs'][] = $this->title;
 $js = <<<EOF
-    $('#boton').click(function (ev) {
-        ev.preventDefault();
-        alert('hola');
+    $('tr').click(function (ev) {
+        alert($(this).data('key'));
     });
 EOF;
 $this->registerJs($js);
